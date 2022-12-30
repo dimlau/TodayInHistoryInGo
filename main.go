@@ -46,7 +46,7 @@ func main() {
 
 func setdaysfromwiki(date string) []History {
 	JF := []History{}
-	URL := "https://zh.wikipedia.org/wiki/"
+	URL := "https://zh.wikipedia.org/zh-cn/"
 	C := colly.NewCollector(
 		colly.CacheDir("./cache"),
 	)
@@ -71,127 +71,71 @@ func setdaysfromwiki(date string) []History {
 			e1.DOM.Remove()
 		})
 		e.ForEach("div.mw-parser-output > ul", func(i int, h *colly.HTMLElement) {
+			daytype := "0"
 			switch {
 			case i < all:
-				h.DOM.Children().Each(func(_ int, h1 *goquery.Selection) {
-					re, _ := regexp.Compile(`在比利時舉行的一級方程式大獎賽中`)
-					MYTXT := re.ReplaceAllStringFunc(h1.Text(), func(s string) string {
-						return "1982年：在比利時舉行的一級方程式大獎賽中"
-					})
-					re1, _ := regexp.Compile(`[名|年]\s?[:|：|︰|——|﹕]\s?`)
-					MYTXT = re1.ReplaceAllStringFunc(MYTXT, func(_ string) string {
-						return "年："
-					})
-					re2, _ := regexp.Compile(`\d+年，`)
-					MYTXT = re2.ReplaceAllStringFunc(MYTXT, func(s string) string {
-						return strings.TrimRight(s, "，") + "："
-					})
-					re4, _ := regexp.Compile(`\d+年\s?（[\S\s]+?）：`)
-					MYTXT = re4.ReplaceAllStringFunc(MYTXT, func(s string) string {
-						return s + "年："
-					})
-					var newTD History
-					if h1.Children().Is("ul") {
-						h1.Children().Children().Each(func(_ int, li *goquery.Selection) {
-							newTD = History{
-								Type:    "1",
-								Year:    strings.Split(MYTXT, "：")[0],
-								Contant: li.Text(),
-							}
-							JF = append(JF, newTD)
-						})
-					} else if h1.Children().Nodes != nil {
-						newTD = History{
-							Type:    "1",
-							Year:    strings.Split(MYTXT, "：")[0],
-							Contant: strings.Split(MYTXT, "年：")[1],
-						}
-						JF = append(JF, newTD)
-					}
-				})
+				daytype = "1"
 			case i == all:
-				h.DOM.Children().Each(func(_ int, h1 *goquery.Selection) {
-					re, _ := regexp.Compile(`\d+]`)
-					MYTXT := re.ReplaceAllStringFunc(h1.Text(), func(s string) string {
-						return strings.TrimRight(s, "]") + "年"
-					})
-					re2, _ := regexp.Compile(`\d+年，`)
-					MYTXT = re2.ReplaceAllStringFunc(MYTXT, func(s string) string {
-						return strings.TrimRight(s, "，") + "："
-					})
-					re3, _ := regexp.Compile(`生年不[祥|详|詳]：`)
-					MYTXT = re3.ReplaceAllStringFunc(MYTXT, func(s string) string {
-						return s + "年："
-					})
-					re1, _ := regexp.Compile(`年\s?[:|：|︰|——|﹕]\s?`)
-					MYTXT = re1.ReplaceAllStringFunc(MYTXT, func(s string) string {
-						return "年："
-					})
-					re4, _ := regexp.Compile(`\d+年\s?（[\S\s]+?）：`)
-					MYTXT = re4.ReplaceAllStringFunc(MYTXT, func(s string) string {
-						return s + "年："
-					})
-					re5, _ := regexp.Compile(`黃麗芳，香港女配音員`)
-					MYTXT = re5.ReplaceAllStringFunc(MYTXT, func(s string) string {
-						return "1979年：黄丽芳，香港女配音员"
-					})
-					var newTD History
-					if h1.Children().Is("ul") {
-						h1.Children().Children().Each(func(_ int, li *goquery.Selection) {
-							newTD = History{
-								Type:    "2",
-								Year:    strings.Split(MYTXT, "：")[0],
-								Contant: li.Text(),
-							}
-							JF = append(JF, newTD)
-						})
-					} else if h1.Children().Nodes != nil {
-						newTD = History{
-							Type:    "2",
-							Year:    strings.Split(MYTXT, "：")[0],
-							Contant: strings.Split(MYTXT, "年：")[1],
-						}
-						JF = append(JF, newTD)
-					}
-				})
+				daytype = "2"
 			case i == all+1:
-				h.DOM.Children().Each(func(_ int, h1 *goquery.Selection) {
-					re, _ := regexp.Compile(`年\s?[:|：|︰|——|﹕]\s?`)
-					MYTXT := re.ReplaceAllStringFunc(h1.Text(), func(s string) string {
-						return "年："
-					})
-					re2, _ := regexp.Compile(`\d+年，`)
-					MYTXT = re2.ReplaceAllStringFunc(MYTXT, func(s string) string {
-						return strings.TrimRight(s, "，") + "："
-					})
-					re4, _ := regexp.Compile(`\d+年\s?（[\S\s]+?）：`)
-					MYTXT = re4.ReplaceAllStringFunc(MYTXT, func(s string) string {
-						return s + "年："
-					})
-					re5, _ := regexp.Compile(`年菲利普·勒`)
-					MYTXT = re5.ReplaceAllStringFunc(MYTXT, func(s string) string {
-						return "年：菲利普·勒"
-					})
-					var newTD History
-					if h1.Children().Is("ul") {
-						h1.Children().Children().Each(func(_ int, li *goquery.Selection) {
+				daytype = "3"
+			}
+			h.DOM.Children().Each(func(_ int, h1 *goquery.Selection) {
+				re, _ := regexp.Compile(`在比利时举行的一级方程式大奖赛中`)
+				MYTXT := re.ReplaceAllStringFunc(h1.Text(), func(s string) string {
+					return "1982年：在比利時舉行的一級方程式大獎賽中"
+				})
+				re7, _ := regexp.Compile(`黄丽芳，香港女配音员`)
+				MYTXT = re7.ReplaceAllStringFunc(MYTXT, func(s string) string {
+					return "1979年：黄丽芳，香港女配音员"
+				})
+				re8, _ := regexp.Compile(`年菲利普·勒`)
+				MYTXT = re8.ReplaceAllStringFunc(MYTXT, func(s string) string {
+					return "年：菲利普·勒"
+				})
+				re1, _ := regexp.Compile(`[名|年]\s?[:|：|︰|——|﹕]\s?`)
+				MYTXT = re1.ReplaceAllStringFunc(MYTXT, func(_ string) string {
+					return "年："
+				})
+				re2, _ := regexp.Compile(`\d+年，`)
+				MYTXT = re2.ReplaceAllStringFunc(MYTXT, func(s string) string {
+					return strings.TrimRight(s, "，") + "："
+				})
+				re4, _ := regexp.Compile(`\d+年\s?（[\S\s]+?）：`)
+				MYTXT = re4.ReplaceAllStringFunc(MYTXT, func(s string) string {
+					return s + "年："
+				})
+				re5, _ := regexp.Compile(`\d+]`)
+				MYTXT = re5.ReplaceAllStringFunc(MYTXT, func(s string) string {
+					return strings.TrimRight(s, "]") + "年"
+				})
+				re6, _ := regexp.Compile(`生年不\S?：`)
+				MYTXT = re6.ReplaceAllStringFunc(MYTXT, func(s string) string {
+					return s + "年："
+				})
+				var newTD History
+				if h1.Children().Is("ul") {
+					h1.Children().Children().Each(func(_ int, li *goquery.Selection) {
+						if daytype != "0" {
 							newTD = History{
-								Type:    "3",
+								Type:    daytype,
 								Year:    strings.Split(MYTXT, "：")[0],
 								Contant: li.Text(),
 							}
 							JF = append(JF, newTD)
-						})
-					} else if h1.Children().Nodes != nil {
+						}
+					})
+				} else if h1.Children().Nodes != nil {
+					if daytype != "0" {
 						newTD = History{
-							Type:    "3",
+							Type:    daytype,
 							Year:    strings.Split(MYTXT, "：")[0],
 							Contant: strings.Split(MYTXT, "年：")[1],
 						}
 						JF = append(JF, newTD)
 					}
-				})
-			}
+				}
+			})
 		})
 	})
 	C.Visit(URL + date)
