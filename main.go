@@ -48,7 +48,7 @@ func setdaysfromwiki(date string) []History {
 	JF := []History{}
 	URL := "https://zh.wikipedia.org/zh-cn/"
 	C := colly.NewCollector(
-		colly.CacheDir("./cache"),
+	//colly.CacheDir("./cache"),
 	)
 	C.WithTransport(&http.Transport{
 		Proxy:             http.ProxyFromEnvironment,
