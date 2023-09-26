@@ -65,7 +65,7 @@ func setdaysfromwiki(date string) []History {
 		ExpectContinueTimeout: 1 * time.Second,
 	})
 	var all int
-	C.OnHTML("#toc ul ul", func(k *colly.HTMLElement) {
+	C.OnHTML("#toc-大事记-sublist", func(k *colly.HTMLElement) {
 		all = k.DOM.Children().Length()
 	})
 	C.OnHTML("#mw-content-text", func(e *colly.HTMLElement) {
@@ -85,7 +85,7 @@ func setdaysfromwiki(date string) []History {
 			h.DOM.Children().Each(func(_ int, h1 *goquery.Selection) {
 				re, _ := regexp.Compile(`在比利时举行的一级方程式大奖赛中`)
 				MYTXT := re.ReplaceAllStringFunc(h1.Text(), func(s string) string {
-					return "1982年：在比利時舉行的一級方程式大獎賽中"
+					return "1982年：在比利时举行的一级方程式大奖赛中"
 				})
 				re7, _ := regexp.Compile(`黄丽芳，香港女配音员`)
 				MYTXT = re7.ReplaceAllStringFunc(MYTXT, func(s string) string {
@@ -107,13 +107,31 @@ func setdaysfromwiki(date string) []History {
 				MYTXT = re4.ReplaceAllStringFunc(MYTXT, func(s string) string {
 					return s + "年："
 				})
-				re5, _ := regexp.Compile(`\d+]`)
+				re5, _ := regexp.Compile(`\d+(]|：)`)
 				MYTXT = re5.ReplaceAllStringFunc(MYTXT, func(s string) string {
-					return strings.TrimRight(s, "]") + "年"
+					tt := strings.TrimRight(s, "]")
+					tt = strings.TrimRight(tt, "：")
+					return tt + "年："
 				})
 				re6, _ := regexp.Compile(`生年不\S?：`)
 				MYTXT = re6.ReplaceAllStringFunc(MYTXT, func(s string) string {
 					return s + "年："
+				})
+				re9, _ := regexp.Compile(`2003年伯纳德·卡茨，`)
+				MYTXT = re9.ReplaceAllStringFunc(MYTXT, func(s string) string {
+					return "2003年：伯纳德·卡茨，"
+				})
+				reX, _ := regexp.Compile(`1990年随黄日华签约亚视`)
+				MYTXT = reX.ReplaceAllStringFunc(MYTXT, func(s string) string {
+					return "1990年：随黄日华签约亚视"
+				})
+				reX1, _ := regexp.Compile(`2023年]：赵有亮，`)
+				MYTXT = reX1.ReplaceAllStringFunc(MYTXT, func(s string) string {
+					return "2023年：赵有亮，"
+				})
+				reX2, _ := regexp.Compile(`1994年申根公约生效。`)
+				MYTXT = reX2.ReplaceAllStringFunc(MYTXT, func(s string) string {
+					return "1994年：申根公约生效。"
 				})
 				var newTD History
 				if h1.Children().Is("ul") {
