@@ -95,13 +95,17 @@ func setdaysfromwiki(date string) []History {
 				MYTXT = re8.ReplaceAllStringFunc(MYTXT, func(s string) string {
 					return "年：菲利普·勒"
 				})
-				re1, _ := regexp.Compile(`[名|年]\s?[:|：|︰|——|﹕]\s?`)
+				re1, _ := regexp.Compile(`[名|年]\s?[:|：|︰|——|﹕｜；]\s?`)
 				MYTXT = re1.ReplaceAllStringFunc(MYTXT, func(_ string) string {
 					return "年："
 				})
 				re2, _ := regexp.Compile(`\d+年，`)
 				MYTXT = re2.ReplaceAllStringFunc(MYTXT, func(s string) string {
 					return strings.TrimRight(s, "，") + "："
+				})
+				re2a, _ := regexp.Compile(`\d+年12月16-17日，`)
+				MYTXT = re2a.ReplaceAllStringFunc(MYTXT, func(s string) string {
+					return strings.TrimRight(s, "12月16-17日，") + "："
 				})
 				re4, _ := regexp.Compile(`\d+年\s?（[\S\s]+?）：`)
 				MYTXT = re4.ReplaceAllStringFunc(MYTXT, func(s string) string {
