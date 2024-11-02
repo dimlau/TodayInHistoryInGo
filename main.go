@@ -67,9 +67,6 @@ func setdaysfromwiki(date string) (JF []History) {
 			e1.DOM.Remove()
 		})
 		e.ForEach("div.mw-parser-output > ul", func(i int, h *colly.HTMLElement) {
-			if i > all+1 {
-				return
-			}
 			daytype := "0"
 			switch {
 			case i < all:
